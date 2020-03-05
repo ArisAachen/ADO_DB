@@ -1,13 +1,17 @@
 ﻿// StoreProc.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
 
-#include <iostream>
 
+#include <iostream>
+#include "database_bridge_class.h"
 
 
 
 int main()
 {
+
+
+
     std::cout << "Hello World!\n";
 }
 

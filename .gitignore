@@ -2,3 +2,15 @@ StoreProc/.vs/StoreProc/v16/Browse.VC.db
 *.config
 *.ipch
 *.suo
+*.exe
+*.ilk
+*.pdb
+*.dll
+*.tlh
+*.tli
+*.log
+*.obj
+*.txt
+*.idb
+*.tlog
+*.lastbuildstate
