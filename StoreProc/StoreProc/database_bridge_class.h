@@ -34,8 +34,8 @@ namespace AdoSpace
 				return L"";
 
 			std::wstring database_config = L"Provider=SQLOLEDB;";
-			database_config.append(L"Initial Catalog=" + database_name_ + L";");
-			database_config.append(L"Data Source=" + database_addr_ + L"," + std::to_wstring(port_) + L";");
+			database_config.append(LR"(Initial Catalog=)" + database_name_ + LR"(;)");
+			database_config.append(LR"(Data Source=)" + database_addr_ + LR"(,)" + std::to_wstring(port_) + LR"(;)");
 			return database_config;
 		}
 
@@ -129,7 +129,7 @@ namespace AdoSpace
 			recordset_.CreateInstance(__uuidof(Recordset));
 
 			if (connection_ == nullptr || command_ == nullptr || recordset_ == nullptr)
-				std::runtime_error("Component init failed");
+				std::runtime_error(R"(Component init failed)");
 		}
 
 		//数据库操作相关
@@ -163,8 +163,8 @@ namespace AdoSpace
 			}
 			catch (_com_error & error)
 			{
-				error.Source();
-				error.Description();
+				//error.Source();
+				//error.Description();
 			}
 		}
 
@@ -185,7 +185,7 @@ namespace AdoSpace
 			}
 			else
 			{
-				command_->Execute(NULL, NULL, adExecuteNoRecords);
+				command_->Execute(nullptr, nullptr, adExecuteNoRecords);
 			}
 		}
 
@@ -194,7 +194,46 @@ namespace AdoSpace
 		{
 			command_->CommandText = L"";
 			recordset_->CursorLocation = adUseClient;
-			connection_->Execute(sentence.c_str(), NULL, adExecuteRecord);
+			connection_->Execute(sentence.c_str(), nullptr, adExecuteRecord);
+		}
+
+		//清除当前，返回下一个
+		void NextRecordSet()
+		{
+			_variant_t var_next(0L);
+			recordset_->NextRecordset(&var_next);
+		}
+
+		//指针指向下一个
+		void MoveToNext()
+		{
+			recordset_->MoveNext();
+		}
+
+		//指针指向第一个
+		void MoveToFirst()
+		{
+			recordset_->MoveFirst();
+		}
+
+		//参数获取
+		void get_parameter(std::wstring parameter_name, _variant_t & get_value)
+		{
+			try
+			{
+				get_value = command_->Parameters->Item[parameter_name.c_str()]->Value;
+			}
+			catch (_com_error error)
+			{
+
+			}
+		}
+
+		//获取值
+		void get_recordset_value(std::wstring parameter_name, _variant_t& value)
+		{
+			FieldsPtr field = recordset_->GetFields();
+			value = field->GetItem(parameter_name.c_str())->GetValue();
 		}
 
 		//数据库参数重置
